@@ -1,7 +1,6 @@
 --Creacion de la base de datos
 --create database baseXTecDigital
 
-
 --Creacion de las tablas de la base de datos
 create table Administrador (
 	cedula varchar(20),
@@ -55,6 +54,7 @@ create table Grupo(
 	primary key (idGrupo)
 );
 
+select * from Grupo
 
 create table ProfesoresGrupo (
 	idGrupo int not null,
@@ -196,8 +196,3 @@ foreign key (idEvaluacion) references Evaluaciones (idEvaluacion);
 Alter table EvaluacionesEstudiantes
 Add constraint FK_idCarnetEvaluacion
 foreign key (carnet) references Estudiantes (carnet);
-
-
-
-
-
