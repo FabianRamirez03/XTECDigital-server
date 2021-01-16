@@ -365,6 +365,8 @@ namespace XTecDigital_Server.Controllers
             cmd.CommandType = System.Data.CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@codigoCurso", usuario.codigoCurso);
             cmd.Parameters.AddWithValue("@numeroGrupo", usuario.numeroGrupo);
+            cmd.Parameters.AddWithValue("@ano", usuario.ano);
+            cmd.Parameters.AddWithValue("@periodo", usuario.periodo);   
             cmd.Parameters.AddWithValue("@cedulaProfesor", usuario.cedulaProfesor);
             List<Object> respuesta = new List<Object>();
             try

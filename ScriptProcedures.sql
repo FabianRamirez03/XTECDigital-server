@@ -58,20 +58,7 @@ BEGIN
 END;
 GO
 
-
---Ver todos los cursos disponibles
-CREATE OR ALTER PROCEDURE verSemestres
-AS
-BEGIN
-	SELECT ano, periodo, cedulaAdmin FROM Semestre;
-END;
-GO
-
---Select * from Semestre
 --Ver todos los cursos de un semestre
---Execute verCursosSemestre @ano = 2021, @periodo = '1'
---Execute verCursosSemestre @ano = 2021, @periodo = 'II'
-AS
 CREATE OR ALTER PROCEDURE verCursosSemestre @ano int, @periodo varchar(10)
 AS
 BEGIN
@@ -312,7 +299,6 @@ BEGIN
 END;
 GO
 
---Execute agregarEstudiantesGrupo @carnet = '2019A0046', @codigoCurso = 'CC2525', @numeroGrupo = 78;
 --Establecer estudiantes del grupo
 CREATE OR ALTER PROCEDURE agregarEstudiantesGrupo @carnet varchar(15), @codigoCurso varchar(10), @numeroGrupo int, @ano int, @periodo varchar(10)
 AS
@@ -333,6 +319,7 @@ GO
 
 
 --PROCEDURE PARA INICIALIZAR SEMESTRE EN BASE A LA TABLA DE EXCEL
+-- Execute crearSemestreExcel
 CREATE OR ALTER PROCEDURE crearSemestreExcel
 AS
 BEGIN
@@ -403,8 +390,8 @@ GO
 CREATE OR ALTER PROCEDURE obtenerProfesorExcel
 AS
 BEGIN
-select IdProfesor, NombreProfesor, ApellidoProfesor,ApellidoProfesor1 from  Data$ where IdProfesor != 'NULL' 
-group by IdProfesor, NombreProfesor, ApellidoProfesor, ApellidoProfesor1
+select IdProfesor, NombreProfesor, ApellidoProfesor,ApellidoProfesor2 from  Data$ where IdProfesor != 'NULL' 
+group by IdProfesor, NombreProfesor, ApellidoProfesor, ApellidoProfesor2
 END;
 GO
 
@@ -537,8 +524,6 @@ Go
 
 --*******************************PROFESOR******************************************
 --Ver Curos a los que pertenece un profesor
---execute verCursosProfesor @cedula  = '1-1111-1111'
-
 CREATE OR ALTER PROCEDURE verCursosProfesor @cedula varchar(20)
 AS
 BEGIN
@@ -986,3 +971,6 @@ BEGIN
 	Select * from Noticias where idGrupo = @idGrupo order by fecha desc;
 END;
 GO
+
+
+Execute agregarAdmin @cedula = '0';

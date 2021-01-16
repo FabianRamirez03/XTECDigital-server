@@ -226,7 +226,7 @@ namespace XTecDigital_Server.Controllers
 
 
 
-        [Route("verEstudiantesSemestre")]
+        [Route("verEstudiantesGrupo")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
         public List<Object> verEstudiantesSemestre(Grupo grupo)
@@ -236,7 +236,7 @@ namespace XTecDigital_Server.Controllers
             //Connect to database
             SqlConnection conn = new SqlConnection(serverKey);
             conn.Open();
-            string insertQuery = "verEstudiantesSemestre";
+            string insertQuery = "verEstudiantesGrupo";
             SqlCommand cmd = new SqlCommand(insertQuery, conn);
             cmd.CommandType = System.Data.CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@ano", grupo.ano);

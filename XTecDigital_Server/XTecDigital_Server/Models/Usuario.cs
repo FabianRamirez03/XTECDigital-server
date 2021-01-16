@@ -17,6 +17,8 @@ namespace XTecDigital_Server.Models
         public string rol { get; set; }
         public string codigoCurso { get; set; }
         public int numeroGrupo { get; set; }
+        public int ano { get; set; }
+        public string periodo { get; set; }
         public string cedulaProfesor { get; set; }
 
     }

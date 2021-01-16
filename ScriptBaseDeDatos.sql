@@ -54,7 +54,6 @@ create table Grupo(
 	primary key (idGrupo)
 );
 
-select * from Grupo
 
 create table ProfesoresGrupo (
 	idGrupo int not null,
