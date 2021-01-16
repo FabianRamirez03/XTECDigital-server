@@ -162,7 +162,7 @@ namespace XTecDigital_Server.Controllers
 
 
 
-            agregarProfeMongoExcel();
+            agregarUsuariosMongoExcel();
         }
 
 
@@ -196,7 +196,7 @@ namespace XTecDigital_Server.Controllers
                                                             { "cedula", dr[0].ToString() },
                                                             { "nombre", dr[1].ToString() },
                                                             { "apellido", dr[2].ToString() },
-                                                            { "apellido1", dr[2].ToString() },
+                                                            { "apellido1", dr[3].ToString() },
                                                             { "password", dr[0].ToString() },
                                                         };
                     collection.InsertOne(document);
@@ -237,7 +237,7 @@ namespace XTecDigital_Server.Controllers
                                                             { "carnet", dr[0].ToString() },
                                                             { "nombre", dr[1].ToString() },
                                                             { "apellido", dr[2].ToString() },
-                                                            { "apellido1", dr[2].ToString() },
+                                                            { "apellido1", dr[3].ToString() },
                                                             { "password", dr[0].ToString() },
                                                         };
                     collection.InsertOne(document);
@@ -253,14 +253,11 @@ namespace XTecDigital_Server.Controllers
 
         }
 
-
-        [Route("agregarUsuariosMongoExcel")]
-        [EnableCors("AnotherPolicy")]
-        [HttpPost]
         public void agregarUsuariosMongoExcel()
         {
             agregarProfeMongoExcel();
             agregarEstudianteMongoExcel();
+            borrarTablaTemporal();
         }
 
         [Route("verCursosSemestre")]
@@ -334,5 +331,19 @@ namespace XTecDigital_Server.Controllers
         }
 
 
+
+        public void borrarTablaTemporal()
+        {
+            List<Object> cursos = new List<Object>();
+            Curso usuarioCarrera = new Curso();
+            //Connect to database
+            SqlConnection conn = new SqlConnection(serverKey);
+            conn.Open();
+            string insertQuery = "borrarTablaTemporal";
+            SqlCommand cmd = new SqlCommand(insertQuery, conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            SqlDataReader dr = cmd.ExecuteReader();
+            conn.Close();
+        }
     }
 }

@@ -431,6 +431,8 @@ namespace XTecDigital_Server.Controllers
             cmd.Parameters.AddWithValue("@carnet", usuario.carnet);
             cmd.Parameters.AddWithValue("@codigoCurso", usuario.codigoCurso);
             cmd.Parameters.AddWithValue("@numeroGrupo", usuario.numeroGrupo);
+            cmd.Parameters.AddWithValue("@ano", usuario.ano);
+            cmd.Parameters.AddWithValue("@periodo", usuario.periodo);
 
             List<Object> respuesta = new List<Object>();
             try

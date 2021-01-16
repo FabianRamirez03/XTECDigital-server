@@ -229,7 +229,7 @@ namespace XTecDigital_Server.Controllers
         [Route("verEstudiantesGrupo")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
-        public List<Object> verEstudiantesSemestre(Grupo grupo)
+        public List<Object> verEstudiantesGrupo(Grupo grupo)
         {
             List<Object> estudiantes = new List<Object>();
             Curso usuarioCarrera = new Curso();
@@ -269,7 +269,7 @@ namespace XTecDigital_Server.Controllers
                     {
                         new {
                             carnet = dr[0].ToString(),
-                            nombre = document.GetValue("nombre").AsString,
+                            nombre = document.GetValue("nombre").AsString + " " + document.GetValue("apellido").AsString + " " + document.GetValue("apellido1").AsString,
                         }
 
                      };

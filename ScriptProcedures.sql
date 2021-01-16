@@ -87,6 +87,14 @@ BEGIN
 END;
 GO
 
+--Ver todos los cursos disponibles
+CREATE OR ALTER PROCEDURE verSemestres
+AS
+BEGIN
+	SELECT ano, periodo, cedulaAdmin FROM Semestre;
+END;
+GO
+
 
 --Permite ver los profesores de un grupo de un semestre y curso especifico
 CREATE OR ALTER PROCEDURE verProfesorSemestre @ano int, @periodo varchar(10), @grupo int, @codigoCurso varchar (10)
@@ -390,8 +398,17 @@ GO
 CREATE OR ALTER PROCEDURE obtenerProfesorExcel
 AS
 BEGIN
-select IdProfesor, NombreProfesor, ApellidoProfesor,ApellidoProfesor2 from  Data$ where IdProfesor != 'NULL' 
-group by IdProfesor, NombreProfesor, ApellidoProfesor, ApellidoProfesor2
+select IdProfesor, NombreProfesor, ApellidoProfesor,ApellidoProfesor1 from  Data$ where IdProfesor != 'NULL' 
+group by IdProfesor, NombreProfesor, ApellidoProfesor, ApellidoProfesor1
+END;
+GO
+
+--Elimina la tabla temporal que se utiliza para importar el excel
+
+CREATE OR ALTER PROCEDURE borrarTablaTemporal
+AS
+BEGIN
+    Drop table Data$;
 END;
 GO
 
@@ -971,6 +988,5 @@ BEGIN
 	Select * from Noticias where idGrupo = @idGrupo order by fecha desc;
 END;
 GO
-
 
 Execute agregarAdmin @cedula = '0';
