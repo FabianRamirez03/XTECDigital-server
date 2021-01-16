@@ -416,9 +416,9 @@ namespace XTecDigital_Server.Controllers
             conn.Close();
         }
 
-        [Route("agregarEstudianteGrupo")]
+        [Route("agregarEstudiantesGrupo")]
         [EnableCors("AnotherPolicy")]
-        [HttpGet]
+        [HttpPost]
         public object agregarEstudiantesGrupo(Usuario usuario)
         {
             SqlConnection conn = new SqlConnection(serverKey);
@@ -429,6 +429,7 @@ namespace XTecDigital_Server.Controllers
             cmd.Parameters.AddWithValue("@carnet", usuario.carnet);
             cmd.Parameters.AddWithValue("@codigoCurso", usuario.codigoCurso);
             cmd.Parameters.AddWithValue("@numeroGrupo", usuario.numeroGrupo);
+
             List<Object> respuesta = new List<Object>();
             try
             {
