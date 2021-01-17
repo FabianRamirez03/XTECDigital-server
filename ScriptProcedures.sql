@@ -6,7 +6,6 @@ INSERT INTO Profesor values (@cedula);
 End;
 Go
 
-
 CREATE OR ALTER PROCEDURE agregarEstudiante @carnet varchar(20)
 AS
 Begin
@@ -20,7 +19,6 @@ Begin
 INSERT INTO Administrador values (@cedula);
 End;
 Go
-
 
 --*******************************ADMINISTRADOR******************************************
 --Crear curso
@@ -84,14 +82,6 @@ BEGIN
 	inner join Grupo as g on c.codigo = g.codigoCurso
 	inner join EstudiantesGrupo as e on g.idGrupo = e.idGrupo
 	where s.idSemestre = @idSemestre and g.numeroGrupo = @grupo and g.codigoCurso = @codigoCurso;
-END;
-GO
-
---Ver todos los cursos disponibles
-CREATE OR ALTER PROCEDURE verSemestres
-AS
-BEGIN
-	SELECT ano, periodo, cedulaAdmin FROM Semestre;
 END;
 GO
 
@@ -327,7 +317,6 @@ GO
 
 
 --PROCEDURE PARA INICIALIZAR SEMESTRE EN BASE A LA TABLA DE EXCEL
--- Execute crearSemestreExcel
 CREATE OR ALTER PROCEDURE crearSemestreExcel
 AS
 BEGIN
@@ -404,11 +393,10 @@ END;
 GO
 
 --Elimina la tabla temporal que se utiliza para importar el excel
-
 CREATE OR ALTER PROCEDURE borrarTablaTemporal
 AS
 BEGIN
-    Drop table Data$;
+	Drop table Data$;
 END;
 GO
 
@@ -538,15 +526,19 @@ Go
 --*******************************ADMINISTRADOR******************************************
 
 
-
 --*******************************PROFESOR******************************************
+
 --Ver Curos a los que pertenece un profesor
 CREATE OR ALTER PROCEDURE verCursosProfesor @cedula varchar(20)
 AS
 BEGIN
-	Select c.nombre, g.numeroGrupo from ProfesoresGrupo as p
+	Select c.nombre, g.numeroGrupo, s.ano, s.periodo, c.codigo from ProfesoresGrupo as p
 	inner join Grupo as g on g.idGrupo = p.idGrupo
-	inner join Curso as c on g.codigoCurso = c.codigo where p.cedulaProfesor = @cedula
+	inner join Curso as c on g.codigoCurso = c.codigo 
+	inner join CursosPorSemestre as cs on cs.codigoCurso = c.codigo
+	inner join Semestre as s on s.idSemestre = cs.idSemestre
+	where p.cedulaProfesor = @cedula
+	order by s.ano desc,s.periodo desc;
 END;
 GO
 
@@ -773,11 +765,13 @@ GO
 CREATE OR ALTER PROCEDURE verEstudiantesCurso @codigoCurso varchar (20)
 AS
 BEGIN
-select * from v_estudiantesCursos where codigo = @codigoCurso 
+select ve.carnetEstudiante, ve.codigo, s.ano, s.periodo from v_estudiantesCursos as ve
+inner join CursosPorSemestre as cs on cs.codigoCurso = ve.codigo
+inner join Semestre as s on s.idSemestre = cs.idSemestre
+where codigo = @codigoCurso
+order by s.ano desc, s.periodo desc
 END;
 GO
---execute verEstudiantesCurso @codigoCurso = 'PR1234'
-
 
 
 --Permite ver el reporte de notas de los estudiantes segun el grupo al que pertenezca
@@ -952,9 +946,13 @@ GO
 CREATE OR ALTER PROCEDURE verCursosEstudiante @carnet varchar(20)
 AS
 BEGIN
-	Select g.numeroGrupo, c.nombre, c.carrera, c.creditos from Curso as c
+	Select g.numeroGrupo, c.nombre, c.carrera, c.creditos, s.ano, s.periodo from Curso as c
 	inner join Grupo as g on g.codigoCurso = c.codigo
-	inner join EstudiantesGrupo as e on e.idGrupo = g.idGrupo where carnetEstudiante = @carnet;
+	inner join EstudiantesGrupo as e on e.idGrupo = g.idGrupo
+	inner join CursosPorSemestre as cs on cs.codigoCurso = c.codigo
+	inner join Semestre as s on s.idSemestre = cs.idSemestre
+	where carnetEstudiante = @carnet
+	order by s.ano desc, s.periodo desc;
 END;
 GO
 
@@ -989,4 +987,5 @@ BEGIN
 END;
 GO
 
-Execute agregarAdmin @cedula = '0';
+--agrega un administrador por defecto
+--execute agregarAdmin @cedula = '0'

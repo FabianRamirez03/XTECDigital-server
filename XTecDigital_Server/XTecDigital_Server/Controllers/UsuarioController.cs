@@ -582,6 +582,7 @@ namespace XTecDigital_Server.Controllers
                             grupo = (int)dr[1],
                             ano = (int)dr[2],
                             periodo = dr[3].ToString(),
+                            codigo = dr[4].ToString(),
                         }
 
                      };
