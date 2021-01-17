@@ -504,6 +504,10 @@ namespace XTecDigital_Server.Controllers
                         new {
                             grupo = (int)dr[0],
                             nombre = dr[1].ToString(),
+                            carrera = dr[2].ToString(),
+                            creditos = dr[3].ToString(),
+                            ano = dr[4].ToString(),
+                            periodo = dr[5].ToString(),
                         }
 
                      };
@@ -576,6 +580,8 @@ namespace XTecDigital_Server.Controllers
                         new {
                             nombre = dr[0].ToString(),
                             grupo = (int)dr[1],
+                            ano = (int)dr[2],
+                            periodo = dr[3].ToString(),
                         }
 
                      };

@@ -237,6 +237,7 @@ namespace XTecDigital_Server.Controllers
                                                             { "nombre", dr[1].ToString() },
                                                             { "apellido", dr[2].ToString() },
                                                             { "apellido1", dr[3].ToString() },
+                                                            { "correo", dr[0].ToString() + "@estudiantec.cr"},
                                                             { "password", MD5Hash(dr[0].ToString()) },
                                                         };
                     collection.InsertOne(document);
