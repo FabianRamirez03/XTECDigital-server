@@ -530,16 +530,15 @@ Go
 --*******************************PROFESOR******************************************
 
 --Ver Curos a los que pertenece un profesor
-CREATE OR ALTER PROCEDURE verCursosProfesor @cedula varchar(20), @ano int, @periodo varchar(10)
+CREATE OR ALTER PROCEDURE verCursosProfesor @cedula varchar(20)
 AS
 BEGIN
-	DECLARE @idSemestre int = (select idSemestre from Semestre where ano = @ano and periodo = @periodo);
 	Select c.nombre, g.numeroGrupo, s.ano, s.periodo from ProfesoresGrupo as p
 	inner join Grupo as g on g.idGrupo = p.idGrupo
 	inner join Curso as c on g.codigoCurso = c.codigo 
 	inner join CursosPorSemestre as cs on cs.codigoCurso = c.codigo
 	inner join Semestre as s on s.idSemestre = cs.idSemestre
-	where p.cedulaProfesor = @cedula and cs.idSemestre = @idSemestre
+	where p.cedulaProfesor = @cedula
 	order by s.ano desc,s.periodo desc;
 END;
 GO
