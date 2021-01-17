@@ -11,6 +11,11 @@ using MongoDB.Driver;
 using XTecDigital_Server.Models;
 
 
+using System.Text;
+using System.Security.Cryptography;
+
+
+
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace XTecDigital_Server.Controllers
@@ -165,12 +170,6 @@ namespace XTecDigital_Server.Controllers
             agregarUsuariosMongoExcel();
         }
 
-
-        
-
-
-
-
         public void agregarProfeMongoExcel()
         {
             List<Object> cursos = new List<Object>();
@@ -197,7 +196,7 @@ namespace XTecDigital_Server.Controllers
                                                             { "nombre", dr[1].ToString() },
                                                             { "apellido", dr[2].ToString() },
                                                             { "apellido1", dr[3].ToString() },
-                                                            { "password", dr[0].ToString() },
+                                                            { "password", MD5Hash(dr[0].ToString()) },
                                                         };
                     collection.InsertOne(document);
                 }
@@ -238,7 +237,7 @@ namespace XTecDigital_Server.Controllers
                                                             { "nombre", dr[1].ToString() },
                                                             { "apellido", dr[2].ToString() },
                                                             { "apellido1", dr[3].ToString() },
-                                                            { "password", dr[0].ToString() },
+                                                            { "password", MD5Hash(dr[0].ToString()) },
                                                         };
                     collection.InsertOne(document);
                 }
@@ -345,5 +344,30 @@ namespace XTecDigital_Server.Controllers
             SqlDataReader dr = cmd.ExecuteReader();
             conn.Close();
         }
+
+
+        public static string MD5Hash(string text)
+        {
+            MD5 md5 = new MD5CryptoServiceProvider();
+
+            //compute hash from the bytes of text  
+            md5.ComputeHash(ASCIIEncoding.ASCII.GetBytes(text));
+
+            //get hash result after compute it  
+            byte[] result = md5.Hash;
+
+            StringBuilder strBuilder = new StringBuilder();
+            for (int i = 0; i < result.Length; i++)
+            {
+                //change it into 2 hexadecimal digits  
+                //for each byte  
+                strBuilder.Append(result[i].ToString("x2"));
+            }
+
+            return strBuilder.ToString();
+        }
+
     }
+
+
 }
