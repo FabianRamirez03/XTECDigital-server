@@ -528,13 +528,19 @@ Go
 
 
 --*******************************PROFESOR******************************************
+
 --Ver Curos a los que pertenece un profesor
-CREATE OR ALTER PROCEDURE verCursosProfesor @cedula varchar(20)
+CREATE OR ALTER PROCEDURE verCursosProfesor @cedula varchar(20), @ano int, @periodo varchar(10)
 AS
 BEGIN
-	Select c.nombre, g.numeroGrupo from ProfesoresGrupo as p
+	DECLARE @idSemestre int = (select idSemestre from Semestre where ano = @ano and periodo = @periodo);
+	Select c.nombre, g.numeroGrupo, s.ano, s.periodo from ProfesoresGrupo as p
 	inner join Grupo as g on g.idGrupo = p.idGrupo
-	inner join Curso as c on g.codigoCurso = c.codigo where p.cedulaProfesor = @cedula
+	inner join Curso as c on g.codigoCurso = c.codigo 
+	inner join CursosPorSemestre as cs on cs.codigoCurso = c.codigo
+	inner join Semestre as s on s.idSemestre = cs.idSemestre
+	where p.cedulaProfesor = @cedula and cs.idSemestre = @idSemestre
+	order by s.ano desc,s.periodo desc;
 END;
 GO
 
@@ -761,11 +767,13 @@ GO
 CREATE OR ALTER PROCEDURE verEstudiantesCurso @codigoCurso varchar (20)
 AS
 BEGIN
-select * from v_estudiantesCursos where codigo = @codigoCurso 
+select ve.carnetEstudiante, ve.codigo, s.ano, s.periodo from v_estudiantesCursos as ve
+inner join CursosPorSemestre as cs on cs.codigoCurso = ve.codigo
+inner join Semestre as s on s.idSemestre = cs.idSemestre
+where codigo = @codigoCurso
+order by s.ano desc, s.periodo desc
 END;
 GO
---execute verEstudiantesCurso @codigoCurso = 'PR1234'
-
 
 
 --Permite ver el reporte de notas de los estudiantes segun el grupo al que pertenezca
@@ -940,9 +948,13 @@ GO
 CREATE OR ALTER PROCEDURE verCursosEstudiante @carnet varchar(20)
 AS
 BEGIN
-	Select g.numeroGrupo, c.nombre, c.carrera, c.creditos from Curso as c
+	Select g.numeroGrupo, c.nombre, c.carrera, c.creditos, s.ano, s.periodo from Curso as c
 	inner join Grupo as g on g.codigoCurso = c.codigo
-	inner join EstudiantesGrupo as e on e.idGrupo = g.idGrupo where carnetEstudiante = @carnet;
+	inner join EstudiantesGrupo as e on e.idGrupo = g.idGrupo
+	inner join CursosPorSemestre as cs on cs.codigoCurso = c.codigo
+	inner join Semestre as s on s.idSemestre = cs.idSemestre
+	where carnetEstudiante = @carnet
+	order by s.ano desc, s.periodo desc;
 END;
 GO
 
