@@ -18,6 +18,8 @@ namespace XTecDigital_Server.Controllers
     {
         private string serverKey = Startup.getKey();
 
+
+        // Controller para crear un nuevo curso a la base de datos
         [Route("crearCurso")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -67,6 +69,8 @@ namespace XTecDigital_Server.Controllers
             return respuesta[0];
         }
 
+
+        // Controller para eliminar un curso de la base de datos
         [Route("eliminarCurso")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -111,6 +115,7 @@ namespace XTecDigital_Server.Controllers
             return respuesta[0];
         }
 
+        // Controller para acceder a todos los cursos, habilitados o no, almacenados en la base de datos
         [Route("verCursos")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -196,21 +201,7 @@ namespace XTecDigital_Server.Controllers
         }
 
 
-
-        [Route("reporteNotas")]
-        [EnableCors("AnotherPolicy")]
-        [HttpPost]
-        public void reporteNotas(Curso curso)
-        {
-            // donde:   que hace                 -> que recibe
-            //Angular: Toco un boton como profe                                         boton en angular
-            //SQL: pedirReporteDeCarnetsPorCurso -> lista de carnets                    Procedure que mande carnets
-            //Mongo: Pedir la informacion con los carnets -> lista de estudiantes       Find en mongo
-            //SQL: mando los estudiantes y hago view -> recibo el view                  Procedure que genere View
-            //Angular: Recibo el Json con el view y muestro                             Monstrarlo grafico
-        }
-
-
+        // Controller para ver todos los cursos que estan habilitados en la base de datos
         [Route("verCursosDisponibles")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -295,7 +286,7 @@ namespace XTecDigital_Server.Controllers
 
         }
 
-
+        // Controller para deshabilitar o habilitar un curso de la base de datos. Al ser boolean, lo cambia a su opuesto
         [Route("habilitar_deshabilitarCurso")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -340,7 +331,7 @@ namespace XTecDigital_Server.Controllers
             return respuesta[0];
         }
 
-
+        // Controller para agregar un nuevo curso, con su numero de grupo y codigo de curso a un semestre determinado
         [Route("agregarCursoSemestre")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]

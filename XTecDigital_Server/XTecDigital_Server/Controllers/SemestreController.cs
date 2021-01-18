@@ -24,9 +24,11 @@ namespace XTecDigital_Server.Controllers
     [ApiController]
     public class SemestreController : ControllerBase
     {
-
+        // Llave para acceder a la base de datos
         private string serverKey = Startup.getKey();
 
+
+        // Controller para generar un nuevo semestre en la base de datos
         [Route("crearSemestre")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -73,6 +75,7 @@ namespace XTecDigital_Server.Controllers
             return respuesta[0];
         }
 
+        // Controller para ver todos los semestres existentes en la base de datos
         [Route("verSemestres")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -140,7 +143,7 @@ namespace XTecDigital_Server.Controllers
 
         }
 
-
+        // Controller para crear el semestre desde el excel 
         [Route("crearSemestreExcel")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -169,6 +172,7 @@ namespace XTecDigital_Server.Controllers
             agregarUsuariosMongoExcel();
         }
 
+        // Controller para agregar los profesores del excel a la base de datos de Mongo
         public void agregarProfeMongoExcel()
         {
             List<Object> cursos = new List<Object>();
@@ -209,7 +213,7 @@ namespace XTecDigital_Server.Controllers
             conn.Close();
         }
 
-
+        // Controller para agregar los estudiantes del excel a la base de datos de Mongo
         public void agregarEstudianteMongoExcel()
         {
             List<Object> cursos = new List<Object>();
@@ -252,6 +256,7 @@ namespace XTecDigital_Server.Controllers
 
         }
 
+        // Controller para realizar todas las funciones necesarias para inicializar el excel
         public void agregarUsuariosMongoExcel()
         {
             agregarProfeMongoExcel();
@@ -259,6 +264,7 @@ namespace XTecDigital_Server.Controllers
             borrarTablaTemporal();
         }
 
+        // Controller para ver todos los cursos de un semestre en específico
         [Route("verCursosSemestre")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -330,7 +336,7 @@ namespace XTecDigital_Server.Controllers
         }
 
 
-
+        // // Controller para borrar la tabla temporal que genera el excel al generarse
         public void borrarTablaTemporal()
         {
             List<Object> cursos = new List<Object>();
@@ -345,7 +351,7 @@ namespace XTecDigital_Server.Controllers
             conn.Close();
         }
 
-
+        // Controller para encriptar las contraseñas del usuario
         public static string MD5Hash(string text)
         {
             MD5 md5 = new MD5CryptoServiceProvider();

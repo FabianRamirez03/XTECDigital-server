@@ -15,8 +15,12 @@ namespace XTecDigital_Server.Controllers
     [ApiController]
     public class CarpetaController : Controller
     {
+        
+        // String para ingresar a la base de datos
         private string serverKey = Startup.getKey();
 
+
+        // Controller para crear nuevas carpetas en la gestion de documentos
         [Route("crearCarpeta")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -64,6 +68,7 @@ namespace XTecDigital_Server.Controllers
         }
 
 
+        // Controller para Eliminar carpetas en la gestion de documentos
         [Route("eliminarCarpeta")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]

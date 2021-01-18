@@ -19,8 +19,12 @@ namespace XTecDigital_Server.Controllers
     [Route("[controller]")]
     public class UsuarioController : ControllerBase
     {
+        // Llave para acceder a la base de datos 
         private string serverKey = Startup.getKey();
 
+
+        // Controller para validar si un usuario existe en la base de datos
+        // Determina el tipo de usuario que es
         [Route("validarUser")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -67,6 +71,7 @@ namespace XTecDigital_Server.Controllers
             
         }
 
+        // Controller para buscar si el usuario es un profesor
         private List<Object> buscarProfesor(Usuario usuario)
         {
             var connectionString = "mongodb+srv://admin:admin@usuarios.ozlkz.mongodb.net/Usuarios?retryWrites=true&w=majority";
@@ -109,6 +114,7 @@ namespace XTecDigital_Server.Controllers
             }
         }
 
+        // Controller para comprobar si el usuario es un administrador
         private List<object> buscarAdmin(Usuario usuario)
         {
             var connectionString = "mongodb+srv://admin:admin@usuarios.ozlkz.mongodb.net/Usuarios?retryWrites=true&w=majority";
@@ -157,6 +163,7 @@ namespace XTecDigital_Server.Controllers
             }
         }
 
+        // Controller para agregar un nuevo estudiante a la base de datos
         [Route("agregarEstudiante")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -179,6 +186,7 @@ namespace XTecDigital_Server.Controllers
             return agregarEstudianteSQL(usuario);
         }
 
+        // Controller para agregar un nuevo profesor a la base de datos
         [Route("agregarProfesor")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -201,6 +209,7 @@ namespace XTecDigital_Server.Controllers
             return agregarProfesorSQL(usuario);
         }
 
+        // Controller para agregar un nuevo administrador a la base de datos
         [Route("agregarAdmin")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -219,7 +228,7 @@ namespace XTecDigital_Server.Controllers
             return agregarAdminSQL(usuario);
         }
 
-
+        // Controller para agregar el carnet a la base de datos de SQL server
         [Route("agregarEstudianteSQL")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -264,7 +273,7 @@ namespace XTecDigital_Server.Controllers
             return respuesta[0];
         }
 
-        
+        // Controller para agregar la cedula de un profesor a la base de datos de SQL server
         [Route("agregarProfesorSQL")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -309,6 +318,8 @@ namespace XTecDigital_Server.Controllers
             return respuesta[0];
         }
 
+
+        // Controller para agregar las credenciales de un administrador a la base de datos de SQL server
         [Route("agregarAdminSQL")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -353,6 +364,7 @@ namespace XTecDigital_Server.Controllers
             return respuesta[0];
         }
 
+        // Controller para asignar un profesor especifico a un grupo
         [Route("asignarProfesorGrupo")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -401,6 +413,7 @@ namespace XTecDigital_Server.Controllers
             return respuesta[0];
         }
 
+        // Controller para eliminar un profesor de un grupo determinado
         [Route("eliminarProfesorGrupo")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -418,6 +431,7 @@ namespace XTecDigital_Server.Controllers
             conn.Close();
         }
 
+        // Controller para agregar un estudiante a un grupo determinado
         [Route("agregarEstudiantesGrupo")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -468,7 +482,7 @@ namespace XTecDigital_Server.Controllers
         }
 
 
-
+        // Controller para ver todos los cursos que están asignados a un estudiante específico
         [Route("verCursosEstudiante")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -545,7 +559,7 @@ namespace XTecDigital_Server.Controllers
         }
 
 
-
+        // Controller para ver todos los cursos a los cuales está asignado un profesor 
         [Route("verCursosProfesor")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -619,7 +633,7 @@ namespace XTecDigital_Server.Controllers
 
         }
 
-
+        // Controller para conseguir todos los esrudiantes de la base de datos de Mongo
         [Route("getNombreEstudiantes")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -674,7 +688,7 @@ namespace XTecDigital_Server.Controllers
         }
 
 
-
+        // Controller para obtener todos los profesores de la base de datos de MOngo
         [Route("getNombreProfesores")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]

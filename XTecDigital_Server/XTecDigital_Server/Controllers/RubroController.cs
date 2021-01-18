@@ -13,8 +13,11 @@ namespace XTecDigital_Server.Controllers
     [Route("[controller]")]
     public class RubroController : Controller
     {
+        // Llave para acceder a la base de datos
         private string serverKey = Startup.getKey();
 
+
+        // // Controller para crear un nuevo rubro para un caso específico
         [Route("crearRubro")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -62,7 +65,7 @@ namespace XTecDigital_Server.Controllers
             return respuesta[0];
         }
 
-
+        // Controller para eliminar un rubro específico
         [Route("eliminarRubro")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -109,6 +112,7 @@ namespace XTecDigital_Server.Controllers
             return respuesta[0];
         }
 
+        // Controller para verificar todos los rubos de un curso específico
         [Route("verificarRubros")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]

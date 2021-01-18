@@ -20,8 +20,10 @@ namespace XTecDigital_Server.Controllers
     [ApiController]
     public class DocumentosController : ControllerBase
     {
+        // llave para acceder a la base de datos
         private string serverKey = Startup.getKey();
 
+        // Controller para crear un nuevo documento en la base de datos
         [Route("crearDocumentos")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -55,6 +57,8 @@ namespace XTecDigital_Server.Controllers
 
         }
 
+
+        // Controller para elimianar un documento de la base de datos
         [Route("eliminarDocumentos")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -79,6 +83,8 @@ namespace XTecDigital_Server.Controllers
             }
             conn.Close();
         }
+
+        // Controller para descargar un archivo de la base de datos
         [Route("Download")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -134,6 +140,7 @@ namespace XTecDigital_Server.Controllers
             }
         }
 
+        // Controller para subir un nuevo archivo a la base de datos 
         [Route("Upload")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -233,6 +240,8 @@ namespace XTecDigital_Server.Controllers
             return null;
         }
 
+
+        // Controller para generar la vista previa de una imagen visualmente
         [Route("GetImage")]
         [EnableCors("AnotherPolicy")]
         [HttpGet]

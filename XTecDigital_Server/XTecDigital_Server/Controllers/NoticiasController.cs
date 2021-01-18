@@ -16,8 +16,11 @@ namespace XTecDigital_Server.Controllers
     [ApiController]
     public class NoticiasController : ControllerBase   
     {
+        //Llave para acceder a la base de datos
         private string serverKey = Startup.getKey();
 
+
+        // Controller para crear una noticia nueva para un curso específico
         [Route("crearNoticiaGrupo")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -66,6 +69,8 @@ namespace XTecDigital_Server.Controllers
             return respuesta[0];
         }
 
+
+        // Controller para eliminar una noticia específica
         [Route("eliminarNoticia")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -114,7 +119,7 @@ namespace XTecDigital_Server.Controllers
 
 
 
-
+        // Controller para modificar el contenido de una noticia específica
         [Route("editarNoticiaGrupo")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -164,7 +169,7 @@ namespace XTecDigital_Server.Controllers
         }
 
 
-
+        // Controller para ver todas las noticias que ha publicado un profesor
         [Route("verNoticiasProfesor")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -238,6 +243,7 @@ namespace XTecDigital_Server.Controllers
         }
 
 
+        // Controller para ver todas las noticias del interes de un estudiante en específico
         [Route("verTodasNoticiasEstudiante")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]

@@ -16,8 +16,11 @@ namespace XTecDigital_Server.Controllers
     [Route("[controller]")]
     public class GrupoController : Controller
     {
+        // Llave para acceder a la base de datos
         private string serverKey = Startup.getKey();
 
+
+        // Crea un nuevo grupo de un determinado curso en la base de datos
         [Route("crearGrupo")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -66,6 +69,7 @@ namespace XTecDigital_Server.Controllers
         }
 
 
+        // Controller para eliminar un determinado grupo de la base de datos
         [Route("eliminarGrupo")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -83,6 +87,8 @@ namespace XTecDigital_Server.Controllers
             conn.Close();
         }
 
+
+        // Controller para asignar un determinado profesor a un grupo específico
         [Route("asignarProfesorGrupo")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -130,6 +136,8 @@ namespace XTecDigital_Server.Controllers
         }
 
 
+
+        // Controller para eliminar un profesor determinado de un curso específico
         [Route("eliminarProfesorGrupo")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -178,6 +186,7 @@ namespace XTecDigital_Server.Controllers
 
 
 
+        // Controller para agregar nuevos estudiantes a un grupo determinado
         [Route("agregarEstudiantesGrupo")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -225,7 +234,7 @@ namespace XTecDigital_Server.Controllers
         }
 
 
-
+        // Controller para ver todos los estudiantes inscritos en un grupo de un curso específico
         [Route("verEstudiantesGrupo")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -306,7 +315,7 @@ namespace XTecDigital_Server.Controllers
         }
 
 
-
+        // Controller para todos los profesores asignados en un grupo específico
         [Route("verProfesorSemestre")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -388,7 +397,7 @@ namespace XTecDigital_Server.Controllers
 
 
 
-
+        // Controller para ver el reporte de notas de un grupo específico
         [Route("verNotasGrupo")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]

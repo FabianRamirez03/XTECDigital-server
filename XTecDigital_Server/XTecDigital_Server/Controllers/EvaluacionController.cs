@@ -14,8 +14,10 @@ namespace XTecDigital_Server.Controllers
     [Route("[controller]")]
     public class EvaluacionController : Controller
     {
+        // Llave para acceder al servidor 
         private string serverKey = Startup.getKey();
 
+        //Crea una nueva evaluacion para un determinado grupo
         [Route("crearEvaluacion")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
@@ -68,7 +70,7 @@ namespace XTecDigital_Server.Controllers
             return respuesta[0];
         }
 
-
+        // Controller para eliminar una evaluacion de un determinado grupo
         [Route("eliminarEvaluacion")]
         [EnableCors("AnotherPolicy")]
         [HttpPost]
