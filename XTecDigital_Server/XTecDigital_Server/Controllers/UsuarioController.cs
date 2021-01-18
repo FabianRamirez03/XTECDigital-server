@@ -508,6 +508,7 @@ namespace XTecDigital_Server.Controllers
                             creditos = dr[3].ToString(),
                             ano = dr[4].ToString(),
                             periodo = dr[5].ToString(),
+                            codigo = dr[6].ToString(),
                         }
 
                      };

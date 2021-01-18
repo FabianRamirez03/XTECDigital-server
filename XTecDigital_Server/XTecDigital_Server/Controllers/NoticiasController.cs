@@ -282,7 +282,7 @@ namespace XTecDigital_Server.Controllers
                             nombre = dr[4],
                             codigoCurso = dr[5].ToString(),
                             numeroGrupo = dr[6],
-                            nombreProfesor = document.GetValue("nombre").AsString + document.GetValue("apellido").AsString
+                            nombreProfesor = document.GetValue("nombre").AsString + " " + document.GetValue("apellido").AsString
                         }
 
                      };
