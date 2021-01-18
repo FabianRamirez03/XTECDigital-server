@@ -646,18 +646,16 @@ END;
 GO
 
 --Ver las evaluaciones de un grupo segun su rubro
-CREATE OR ALTER PROCEDURE verEvaluacionesPorRubro @codigoCurso varchar(10), @numeroGrupo int, @rubro varchar(50)
+CREATE OR ALTER PROCEDURE verEvaluacionesEstudiantes @codigoCurso varchar(10), @numeroGrupo int, @rubro varchar(50), @nombreEvaluacion varchar (50)
 AS
 BEGIN
 	DECLARE @idGrupo int = (select idGrupo from Grupo where codigoCurso = @codigoCurso and numeroGrupo = @numeroGrupo);
-	Select e.idEvaluacion, e.nombre nombreEvaluacion, e.porcentaje porcentajeEvaluacion, r.porcentaje porcentajeRubro, e.grupal, e.fechaInicio,
-	e.fechaFin, e.nombreArchivo, e.tipoArchivo, e.archivo from Evaluaciones as e
-	inner join Rubros as r on e.idRubro = r.idRubro 
-	where r.idGrupo = @idGrupo and rubro = @rubro;
+	DECLARE @idRubro int = (select idRubro from Rubros where idGrupo = @idGrupo and rubro = @rubro);
+	DECLARE @idEvaluacion int = (select idEvaluacion from Evaluaciones where idRubro = @idRubro and nombre = @nombreEvaluacion)
+	Select carnet, archivoSolucion from EvaluacionesEstudiantes where idEvaluacion = @idEvaluacion and archivoSolucion != 'NULL'
+	group by carnet, archivoSolucion
 END;
 GO
-
-
 
 
 --Asignar grupos de trabajo
@@ -724,15 +722,21 @@ END;
 GO
 
 --Revisar las evaluaciones estudiante, subir comentario, poner nota, subir archivo retroalimentacion)
-CREATE OR ALTER PROCEDURE revisarEvaluacion @carnet varchar(20), @idEvaluacion int, @nota decimal(5,2), @comentario varchar(200), @nombreArch varchar(100),
+CREATE OR ALTER PROCEDURE revisarEvaluacion @carnet varchar(20), @codigoCurso varchar(20), @numeroGrupo int, @rubro varchar (20), @nombre varchar (50),  @nota decimal(5,2), @comentario varchar(200), @nombreArch varchar(100),
 @tipoArch varchar (100), @archivoRetroalimentacion varchar(MAX)
 AS
 BEGIN
+	DECLARE @idGrupo int = (select idGrupo from Grupo where codigoCurso = @codigoCurso and numeroGrupo = @numeroGrupo);
+	DECLARE @idRubro int = (select idRubro from Rubros where idGrupo = @idGrupo and rubro = @rubro);
+	DECLARE @idEvaluacion int = (select idEvaluacion from Evaluaciones where idRubro = @idRubro and nombre = @nombre);
 	update EvaluacionesEstudiantes set nota = @nota, comentario = @comentario, archivoRetroalimentacion =  @archivoRetroalimentacion, 
 	nombArchRetr = @nombreArch, tipoArchRetr = @tipoArch
 	where carnet = @carnet and idEvaluacion = @idEvaluacion;
 END;
 GO
+
+
+
 
 
 --Indica que las notas de una evaluacion ya fueron publicadas y crea una noticia por medio de un trigger
@@ -987,7 +991,7 @@ GO
 CREATE OR ALTER PROCEDURE verCursosEstudiante @carnet varchar(20)
 AS
 BEGIN
-	Select g.numeroGrupo, c.nombre, c.carrera, c.creditos, s.ano, s.periodo from Curso as c
+	Select g.numeroGrupo, c.nombre, c.carrera, c.creditos, s.ano, s.periodo, g.codigoCurso from Curso as c
 	inner join Grupo as g on g.codigoCurso = c.codigo
 	inner join EstudiantesGrupo as e on e.idGrupo = g.idGrupo
 	inner join CursosPorSemestre as cs on cs.codigoCurso = c.codigo
@@ -1037,6 +1041,8 @@ BEGIN
 	inner join EstudiantesGrupo as eg on eg.idGrupo = n.idGrupo
 	inner join Grupo as g on n.idGrupo = g.idGrupo
 	inner join Curso as c on g.codigoCurso = c.codigo
-	where eg.carnetEstudiante = @carnet;
+	where eg.carnetEstudiante = @carnet
+	order by fecha desc;
 END;
 GO
+
