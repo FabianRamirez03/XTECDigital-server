@@ -336,7 +336,7 @@ BEGIN
 	--Crea los grupos de los estudiantes
 	insert into Grupo (codigoCurso, numeroGrupo) select idCurso, Grupo from Data$ where IdCurso != 'NULL' group by idCurso, grupo;
 
-	--Crea las carpetas y evaluaciones por defecto de los grupos
+	--Crea las carpetas y rubros por defecto de los grupos
 	Declare db_cursor CURSOR for select idCurso, Grupo from Data$ where IdCurso != 'NULL' group by idCurso, grupo;
 	DECLARE @cod varchar(15);
 	DECLARE @num int;
@@ -685,6 +685,15 @@ BEGIN
 END;
 GO
 
+--Ver todas las noticias creadas por un profesor
+CREATE OR ALTER PROCEDURE verNoticiasProfesor @cedula varchar(20)
+AS
+BEGIN
+	select titulo, mensaje, fecha from Noticias where cedulaAutor = @cedula order by fecha desc;
+END;
+GO
+
+
 --Ver evaluaciones de los estudiantes
 CREATE OR ALTER PROCEDURE verEvaluacionesEstudiantes @idEvaluacion int
 AS
@@ -703,7 +712,6 @@ BEGIN
 	where carnet = @carnet and idEvaluacion = @idEvaluacion;
 END;
 GO
-
 
 
 --Indica que las notas de una evaluacion ya fueron publicadas y crea una noticia por medio de un trigger
@@ -990,5 +998,15 @@ BEGIN
 END;
 GO
 
+--Ver todas las noticias de un estudiante
+CREATE OR ALTER PROCEDURE verTodasNoticiasEstudiante @carnet varchar(20)
+AS
+BEGIN
+	select n.titulo, n.mensaje, n.fecha, n.cedulaAutor from Noticias as n
+	inner join EstudiantesGrupo as eg on eg.idGrupo = n.idGrupo
+	where eg.carnetEstudiante = @carnet;
+END;
+GO
+
 --agrega un administrador por defecto
-execute agregarAdmin @cedula = '0'
+execute agregarAdmin @cedula = '0';
