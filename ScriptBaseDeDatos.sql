@@ -7,7 +7,6 @@ create table Administrador (
 	primary key (cedula)
 );
 
-
 create table Semestre (
 	idSemestre int identity(1,1),
 	ano int not null,
@@ -94,6 +93,7 @@ create table Noticias(
 	mensaje varchar (max) not null,
 	fecha datetime default getDate(),
 	idGrupo int not null,
+	cedulaAutor varchar (20),
 	primary key (idNoticia)
 );
 

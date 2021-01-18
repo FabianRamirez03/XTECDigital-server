@@ -533,7 +533,7 @@ Go
 CREATE OR ALTER PROCEDURE verCursosProfesor @cedula varchar(20)
 AS
 BEGIN
-	Select c.nombre, g.numeroGrupo, s.ano, s.periodo from ProfesoresGrupo as p
+	Select c.nombre, g.numeroGrupo, s.ano, s.periodo, c.codigo from ProfesoresGrupo as p
 	inner join Grupo as g on g.idGrupo = p.idGrupo
 	inner join Curso as c on g.codigoCurso = c.codigo 
 	inner join CursosPorSemestre as cs on cs.codigoCurso = c.codigo
@@ -658,11 +658,11 @@ END;
 GO
 
 --Creacion de noticias
-CREATE OR ALTER PROCEDURE crearNoticiaGrupo @codigoCurso varchar (10), @numeroGrupo int, @tituloNoticia varchar(50), @mensaje varchar(300)
+CREATE OR ALTER PROCEDURE crearNoticiaGrupo @codigoCurso varchar (10), @numeroGrupo int, @tituloNoticia varchar(50), @mensaje varchar(300), @cedulaAutor varchar (20)
 AS
 BEGIN
 	Declare @idGrupo int = (select idGrupo from Grupo where codigoCurso = @codigoCurso and numeroGrupo = @numeroGrupo);
-	insert into Noticias (titulo, mensaje, fecha, idGrupo) values (@tituloNoticia, @mensaje, getDate(), @idGrupo);
+	insert into Noticias (titulo, mensaje, fecha, idGrupo,cedulaAutor) values (@tituloNoticia, @mensaje, getDate(), @idGrupo,@cedulaAutor);
 END;
 GO
 
@@ -821,9 +821,10 @@ BEGIN
 				DECLARE @mensNot varchar (200) = (select CONCAT ('Las notas de la evaluacion ', @nombEv, ' ya se encuentran disponibles'));
 				DECLARE @idRubro int = (select idRubro from inserted);
 				DECLARE @idGrupo int = (select idGrupo from Rubros where idRubro = @idRubro);
+				DECLARE @autor varchar(20) = (select top(1) cedulaProfesor from ProfesoresGrupo where idGrupo = @idGrupo);
 				DECLARE @codCurs varchar(30) = (select codigoCurso from Grupo where idGrupo = @idGrupo);
 				DECLARE @numGrup int = (select numeroGrupo from Grupo where idGrupo = @idGrupo);
-				Execute crearNoticiaGrupo @codigoCurso = @codCurs, @numeroGrupo = @numGrup, @tituloNoticia = @titNot, @mensaje = @mensNot;
+				Execute crearNoticiaGrupo @codigoCurso = @codCurs, @numeroGrupo = @numGrup, @tituloNoticia = @titNot, @mensaje = @mensNot, @cedulaAutor = @autor;
 			END;
 		END;
 		Else if (@cantidad > 0)
@@ -984,7 +985,8 @@ CREATE OR ALTER PROCEDURE verNoticiasGrupo @codigoCurso varchar(10), @numeroGrup
 AS
 BEGIN
 	Declare @idGrupo int = (select idGrupo from Grupo where codigoCurso = @codigoCurso and numeroGrupo = @numeroGrupo);
-	Select * from Noticias where idGrupo = @idGrupo order by fecha desc;
+	Select titulo, mensaje, fecha, cedulaAutor from Noticias 
+	where idGrupo = @idGrupo order by fecha desc;
 END;
 GO
 
