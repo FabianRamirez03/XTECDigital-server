@@ -386,5 +386,88 @@ namespace XTecDigital_Server.Controllers
         }
 
 
+
+
+
+        [Route("verNotasGrupo")]
+        [EnableCors("AnotherPolicy")]
+        [HttpPost]
+        public List<Object> verNotasGrupo(Grupo grupo)
+        {
+            List<Object> semestres = new List<Object>();
+            //Connect to database
+            SqlConnection conn = new SqlConnection(serverKey);
+            conn.Open();
+            string insertQuery = "verNotasGrupo";
+            SqlCommand cmd = new SqlCommand(insertQuery, conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@codigoCurso", grupo.codigoCurso);
+            cmd.Parameters.AddWithValue("@numeroGrupo", grupo.numeroGrupo);
+            try
+            {
+                SqlDataReader dr = cmd.ExecuteReader();
+                var response = new[]
+                    {
+                        new
+                        {
+                            respuesta = "200 OK",
+                            error = "null"
+                        }
+
+                     };
+                semestres.Add(response);
+                while (dr.Read())
+                {
+                    var connectionString = "mongodb+srv://admin:admin@usuarios.ozlkz.mongodb.net/Usuarios?retryWrites=true&w=majority";
+                    var mongoClient = new MongoClient(connectionString);
+                    var dataBase = mongoClient.GetDatabase("Usuarios");
+                    var collection = dataBase.GetCollection<BsonDocument>("estudiantes");
+                    var filter = Builders<BsonDocument>.Filter.Eq("carnet", dr[0].ToString());
+                    var document = collection.Find(filter).FirstOrDefault();
+                    var jsons = new[]
+                    {
+                        new {
+                            carnet = dr[0].ToString(),
+                            nombreEstudiante = document.GetValue("nombre").AsString + " " + document.GetValue("apellido").AsString + " " + document.GetValue("apellido1").AsString,
+                            nombreEvaluacion = dr[1].ToString(),
+                            rubro = dr[2].ToString(),
+                            notaObtenida = dr[3].ToString(),
+                            porcentajeObtenido = dr[4],
+                            porcentajeEvaluacion = dr[5].ToString(),
+                            notaFinalCurso = dr[6]
+                        }
+
+                     };
+                    Console.WriteLine(jsons);
+                    semestres.Add(jsons);
+                }
+
+            }
+            catch (Exception e)
+            {
+                string[] separatingStrings = { "\r" };
+                var response = new[]
+                    {
+                        new
+                        {
+                            respuesta = "error",
+                            error = e.Message.Split(separatingStrings, System.StringSplitOptions.RemoveEmptyEntries)[0]
+            }
+
+                     };
+                semestres.Add(response);
+
+            }
+
+            List<object> retornar = new List<object>();
+            for (var x = 0; x < semestres.Count; x++)
+            {
+                var tempList = (IList<object>)semestres[x];
+                retornar.Add(tempList[0]);
+            }
+            conn.Close();
+            return retornar;
+
+        }
     }
 }
