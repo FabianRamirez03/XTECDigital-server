@@ -105,7 +105,6 @@ namespace XTecDigital_Server.Controllers
                         new {
                             ano = dr[0].ToString(),
                             periodo = dr[1].ToString(),
-                            cedulaAdmin = dr[2].ToString(),
                         }
 
                      };

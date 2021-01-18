@@ -1,4 +1,3 @@
---Validacion de profesores, administradores y estudiantes en el Log In
 CREATE OR ALTER PROCEDURE agregarProfesor @cedula varchar(20)
 AS
 Begin
@@ -336,7 +335,7 @@ BEGIN
 	--Crea los grupos de los estudiantes
 	insert into Grupo (codigoCurso, numeroGrupo) select idCurso, Grupo from Data$ where IdCurso != 'NULL' group by idCurso, grupo;
 
-	--Crea las carpetas y evaluaciones por defecto de los grupos
+	--Crea las carpetas y rubros por defecto de los grupos
 	Declare db_cursor CURSOR for select idCurso, Grupo from Data$ where IdCurso != 'NULL' group by idCurso, grupo;
 	DECLARE @cod varchar(15);
 	DECLARE @num int;
@@ -526,6 +525,7 @@ Go
 --*******************************ADMINISTRADOR******************************************
 
 
+
 --*******************************PROFESOR******************************************
 
 --Ver Curos a los que pertenece un profesor
@@ -648,6 +648,9 @@ BEGIN
 END;
 GO
 
+
+
+
 --Asignar grupos de trabajo
 CREATE OR ALTER PROCEDURE agregarEstudianteEvaluacionGrupal @carnetEstudiante varchar (15), @idEvaluacion int, @numeroGrupoEvaluacion int
 AS
@@ -657,11 +660,11 @@ END;
 GO
 
 --Creacion de noticias
-CREATE OR ALTER PROCEDURE crearNoticiaGrupo @codigoCurso varchar (10), @numeroGrupo int, @tituloNoticia varchar(50), @mensaje varchar(300)
+CREATE OR ALTER PROCEDURE crearNoticiaGrupo @codigoCurso varchar (10), @numeroGrupo int, @tituloNoticia varchar(50), @mensaje varchar(300), @cedulaAutor varchar (20)
 AS
 BEGIN
 	Declare @idGrupo int = (select idGrupo from Grupo where codigoCurso = @codigoCurso and numeroGrupo = @numeroGrupo);
-	insert into Noticias (titulo, mensaje, fecha, idGrupo) values (@tituloNoticia, @mensaje, getDate(), @idGrupo);
+	insert into Noticias (titulo, mensaje, fecha, idGrupo,cedulaAutor) values (@tituloNoticia, @mensaje, getDate(), @idGrupo,@cedulaAutor);
 END;
 GO
 
@@ -684,6 +687,15 @@ BEGIN
 END;
 GO
 
+--Ver todas las noticias creadas por un profesor
+CREATE OR ALTER PROCEDURE verNoticiasProfesor @cedula varchar(20)
+AS
+BEGIN
+	select titulo, mensaje, fecha from Noticias where cedulaAutor = @cedula order by fecha desc;
+END;
+GO
+
+
 --Ver evaluaciones de los estudiantes
 CREATE OR ALTER PROCEDURE verEvaluacionesEstudiantes @idEvaluacion int
 AS
@@ -702,7 +714,6 @@ BEGIN
 	where carnet = @carnet and idEvaluacion = @idEvaluacion;
 END;
 GO
-
 
 
 --Indica que las notas de una evaluacion ya fueron publicadas y crea una noticia por medio de un trigger
@@ -783,6 +794,16 @@ BEGIN
 END;
 GO
 
+--Ver todos los rubros y porcentajes un grupo en especifico
+CREATE OR ALTER PROCEDURE verDatosAsignacion @rubro varchar(20), @numeroGrupo int, @codigoCurso varchar(20)
+AS
+BEGIN
+	select e.nombre, e.fechaFin, e.porcentaje, e.archivo,   from Evaluaciones as e
+	select * from EvaluacionesEstudiantes
+END;
+GO
+
+
 --........................................................TRIGGERS........................................................
 --Asigna la misma calificacion a todos los miembros de una evaluacion grupal
 CREATE OR ALTER TRIGGER tr_modificacionGrupal on EvaluacionesEstudiantes
@@ -820,9 +841,10 @@ BEGIN
 				DECLARE @mensNot varchar (200) = (select CONCAT ('Las notas de la evaluacion ', @nombEv, ' ya se encuentran disponibles'));
 				DECLARE @idRubro int = (select idRubro from inserted);
 				DECLARE @idGrupo int = (select idGrupo from Rubros where idRubro = @idRubro);
+				DECLARE @autor varchar(20) = (select top(1) cedulaProfesor from ProfesoresGrupo where idGrupo = @idGrupo);
 				DECLARE @codCurs varchar(30) = (select codigoCurso from Grupo where idGrupo = @idGrupo);
 				DECLARE @numGrup int = (select numeroGrupo from Grupo where idGrupo = @idGrupo);
-				Execute crearNoticiaGrupo @codigoCurso = @codCurs, @numeroGrupo = @numGrup, @tituloNoticia = @titNot, @mensaje = @mensNot;
+				Execute crearNoticiaGrupo @codigoCurso = @codCurs, @numeroGrupo = @numGrup, @tituloNoticia = @titNot, @mensaje = @mensNot, @cedulaAutor = @autor;
 			END;
 		END;
 		Else if (@cantidad > 0)
@@ -933,6 +955,7 @@ BEGIN
 	Return
 END;
 GO
+
 --........................................................TRIGGERS........................................................
 
 
@@ -983,9 +1006,20 @@ CREATE OR ALTER PROCEDURE verNoticiasGrupo @codigoCurso varchar(10), @numeroGrup
 AS
 BEGIN
 	Declare @idGrupo int = (select idGrupo from Grupo where codigoCurso = @codigoCurso and numeroGrupo = @numeroGrupo);
-	Select * from Noticias where idGrupo = @idGrupo order by fecha desc;
+	Select titulo, mensaje, fecha, cedulaAutor from Noticias 
+	where idGrupo = @idGrupo order by fecha desc;
+END;
+GO
+
+--Ver todas las noticias de un estudiante
+CREATE OR ALTER PROCEDURE verTodasNoticiasEstudiante @carnet varchar(20)
+AS
+BEGIN
+	select n.titulo, n.mensaje, n.fecha, n.cedulaAutor from Noticias as n
+	inner join EstudiantesGrupo as eg on eg.idGrupo = n.idGrupo
+	where eg.carnetEstudiante = @carnet;
 END;
 GO
 
 --agrega un administrador por defecto
---execute agregarAdmin @cedula = '0'
+--execute agregarAdmin @cedula = '0';

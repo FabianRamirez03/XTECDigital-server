@@ -23,7 +23,7 @@ namespace XTecDigital_Server
         }
         public static string getKey()
         {
-            return "Data Source=DESKTOP-OJVFTVA;Initial Catalog=baseXTecDigital;Integrated Security=True";
+            return "Server = serverbasextecdigital.database.windows.net;Initial Catalog=baseXTecDigital;Persist Security Info = False;User ID=adminxtecdigital;Password=Contra123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30";
         }
         public IConfiguration Configuration { get; }
 

@@ -13,6 +13,8 @@ namespace XTecDigital_Server.Models
         public string codigoCurso { get; set; }
         public int numeroGrupo { get; set; }
         public string tituloNoticia { get; set; }
+        public string tituloViejo { get; set; }
         public string mensaje { get; set; }
+        public string cedulaAutor { get; set; }
     }
 }
