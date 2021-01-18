@@ -649,6 +649,9 @@ BEGIN
 END;
 GO
 
+
+
+
 --Asignar grupos de trabajo
 CREATE OR ALTER PROCEDURE agregarEstudianteEvaluacionGrupal @carnetEstudiante varchar (15), @idEvaluacion int, @numeroGrupoEvaluacion int
 AS
@@ -791,6 +794,16 @@ BEGIN
 	from v_notasGrupalesResumidas where numeroGrupo = @numeroGrupo and codigoCurso = @codigoCurso;
 END;
 GO
+
+--Ver todos los rubros y porcentajes un grupo en especifico
+CREATE OR ALTER PROCEDURE verDatosAsignacion @rubro varchar(20), @numeroGrupo int, @codigoCurso varchar(20)
+AS
+BEGIN
+	select e.nombre, e.fechaFin, e.porcentaje, e.archivo,   from Evaluaciones as e
+	select * from EvaluacionesEstudiantes
+END;
+GO
+
 
 --........................................................TRIGGERS........................................................
 --Asigna la misma calificacion a todos los miembros de una evaluacion grupal
@@ -943,6 +956,7 @@ BEGIN
 	Return
 END;
 GO
+
 --........................................................TRIGGERS........................................................
 
 
