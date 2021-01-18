@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using XTecDigital_Server.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
+using MongoDB.Driver;
+using MongoDB.Bson;
 
 namespace XTecDigital_Server.Controllers
 {
@@ -200,6 +202,87 @@ namespace XTecDigital_Server.Controllers
                             nombre = dr[3],
                             numeroGrupo = dr[4],
                             codigoCurso = dr[5].ToString()
+                        }
+
+                     };
+                    Console.WriteLine(jsons);
+                    semestres.Add(jsons);
+                }
+
+            }
+            catch (Exception e)
+            {
+                string[] separatingStrings = { "\r" };
+                var response = new[]
+                    {
+                        new
+                        {
+                            respuesta = "error",
+                            error = e.Message.Split(separatingStrings, System.StringSplitOptions.RemoveEmptyEntries)[0]
+            }
+
+                     };
+                semestres.Add(response);
+
+            }
+
+            List<object> retornar = new List<object>();
+            for (var x = 0; x < semestres.Count; x++)
+            {
+                var tempList = (IList<object>)semestres[x];
+                retornar.Add(tempList[0]);
+            }
+            conn.Close();
+            return retornar;
+
+        }
+
+
+        [Route("verTodasNoticiasEstudiante")]
+        [EnableCors("AnotherPolicy")]
+        [HttpPost]
+        public List<Object> verTodasNoticiasEstudiante(Noticia noticia)
+        {
+            List<Object> semestres = new List<Object>();
+            //Connect to database
+            SqlConnection conn = new SqlConnection(serverKey);
+            conn.Open();
+            string insertQuery = "verTodasNoticiasEstudiante";
+            SqlCommand cmd = new SqlCommand(insertQuery, conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@carnet", noticia.carnet);
+            try
+            {
+                SqlDataReader dr = cmd.ExecuteReader();
+                var response = new[]
+                    {
+                        new
+                        {
+                            respuesta = "200 OK",
+                            error = "null"
+                        }
+
+                     };
+                semestres.Add(response);
+                while (dr.Read())
+                {
+                    var connectionString = "mongodb+srv://admin:admin@usuarios.ozlkz.mongodb.net/Usuarios?retryWrites=true&w=majority";
+                    var mongoClient = new MongoClient(connectionString);
+                    var dataBase = mongoClient.GetDatabase("Usuarios");
+                    var collection = dataBase.GetCollection<BsonDocument>("profesores");
+                    var filter = Builders<BsonDocument>.Filter.Eq("cedula", dr[3].ToString());
+                    var document = collection.Find(filter).FirstOrDefault();
+                    var jsons = new[]
+                    {
+                        new {
+                            titulo = dr[0].ToString(),
+                            mensaje = dr[1].ToString(),
+                            fecha = dr[2].ToString(),
+                            cedulaAutor = dr[3].ToString(),
+                            nombre = dr[4],
+                            codigoCurso = dr[5].ToString(),
+                            numeroGrupo = dr[6],
+                            nombreProfesor = document.GetValue("nombre").AsString + document.GetValue("apellido").AsString
                         }
 
                      };

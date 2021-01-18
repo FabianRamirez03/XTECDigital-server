@@ -16,5 +16,6 @@ namespace XTecDigital_Server.Models
         public string tituloViejo { get; set; }
         public string mensaje { get; set; }
         public string cedulaAutor { get; set; }
+        public string carnet { get; set; }
     }
 }
