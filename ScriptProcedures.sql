@@ -101,6 +101,15 @@ END;
 GO
 
 
+--Ver los semestres 
+CREATE OR ALTER PROCEDURE verSemestres
+AS
+BEGIN
+	select ano, periodo from Semestre
+	order by ano desc, periodo desc;
+END;
+GO
+
 --Habilitar o deshabilitar un curso
 CREATE OR ALTER PROCEDURE habilitar_deshabilitarCurso @codigo varchar(50)
 AS
@@ -167,7 +176,6 @@ BEGIN
 END;
 GO
 
-
 --Crear Documentos
 CREATE OR ALTER PROCEDURE crearDocumentos @nombreDocumento varchar(50), @archivo varchar(MAX),@tamano int, @nombreCarpeta varchar(50),
 @codigoCurso varchar(10), @numeroGrupo int, @tipoArchivo varchar (10)
@@ -216,13 +224,13 @@ GO
 
 --Crear Evaluacion
 CREATE OR ALTER PROCEDURE crearEvaluacion @grupal int, @nombre varchar(50), @porcentaje decimal(5,2), @fechaInicio datetime, @fechaFin datetime,
-@archivo varchar(MAX), @nombArch varchar (100), @tipArch varchar(100),  @rubro varchar(50), @codigoCurso varchar(20), @numeroGrupo int
+@archivo varchar(MAX), @nombArch varchar (100), @tipArch varchar(100),  @rubro varchar(50), @codigoCurso varchar(20), @numeroGrupo int, @cantPersonas int
 AS
 BEGIN
 	DECLARE @idGrup int = (select idGrupo from Grupo where codigoCurso = @codigoCurso and numeroGrupo = @numeroGrupo);
 	DECLARE @idRubro int = (select idRubro from Rubros where idGrupo = @idGrup and rubro = @rubro);
-	insert into Evaluaciones (grupal, nombre, porcentaje, fechaInicio, fechaFin, archivo, idRubro, nombreArchivo, tipoArchivo)
-	values (@grupal, @nombre, @porcentaje, @fechaInicio, @fechaFin,  @archivo, @idRubro, @nombArch, @tipArch);
+	insert into Evaluaciones (grupal, nombre, porcentaje, fechaInicio, fechaFin, archivo, idRubro, nombreArchivo, tipoArchivo, cantPersonas)
+	values (@grupal, @nombre, @porcentaje, @fechaInicio, @fechaFin,  @archivo, @idRubro, @nombArch, @tipArch, @cantPersonas);
 	IF (@grupal = 0)
 	BEGIN
 		DECLARE @idEva int = (select idEvaluacion from Evaluaciones where idRubro = @idRubro and nombre = @nombre);
@@ -656,7 +664,14 @@ GO
 CREATE OR ALTER PROCEDURE agregarEstudianteEvaluacionGrupal @carnetEstudiante varchar (15), @idEvaluacion int, @numeroGrupoEvaluacion int
 AS
 BEGIN
-	insert into EvaluacionesEstudiantes (carnet, idEvaluacion, grupo) values (@carnetEstudiante, @idEvaluacion, @numeroGrupoEvaluacion)
+	DECLARE @cantPermitida int = (select cantPersonas from Evaluaciones where idEvaluacion = @idEvaluacion);
+	IF (select count(*) from EvaluacionesEstudiantes where idEvaluacion = @idEvaluacion and grupo = @numeroGrupoEvaluacion) < @cantPermitida
+	BEGIN
+		insert into EvaluacionesEstudiantes (carnet, idEvaluacion, grupo) values (@carnetEstudiante, @idEvaluacion, @numeroGrupoEvaluacion)
+	END;
+	ELSE
+		RAISERROR ('El grupo ya esta lleno',16,1);
+		Return
 END;
 GO
 
@@ -692,7 +707,10 @@ GO
 CREATE OR ALTER PROCEDURE verNoticiasProfesor @cedula varchar(20)
 AS
 BEGIN
-	select titulo, mensaje, fecha from Noticias where cedulaAutor = @cedula order by fecha desc;
+	select titulo, mensaje, fecha, c.nombre, g.numeroGrupo, g.codigoCurso from Noticias as n
+	inner join grupo as g on n.idGrupo = g.idGrupo
+	inner join Curso as c on c.codigo = g.codigoCurso
+	where n.cedulaAutor = @cedula order by fecha desc;
 END;
 GO
 
@@ -799,8 +817,7 @@ GO
 CREATE OR ALTER PROCEDURE verDatosAsignacion @rubro varchar(20), @numeroGrupo int, @codigoCurso varchar(20)
 AS
 BEGIN
-	select e.nombre, e.fechaFin, e.porcentaje, e.archivo,   from Evaluaciones as e
-	select * from EvaluacionesEstudiantes
+	select e.nombre, e.fechaFin, e.porcentaje, e.archivo, e.cantPersonas from Evaluaciones as e
 END;
 GO
 
@@ -1016,11 +1033,10 @@ GO
 CREATE OR ALTER PROCEDURE verTodasNoticiasEstudiante @carnet varchar(20)
 AS
 BEGIN
-	select n.titulo, n.mensaje, n.fecha, n.cedulaAutor from Noticias as n
+	select n.titulo, n.mensaje, n.fecha, n.cedulaAutor, c.nombre, g.codigoCurso, g.numeroGrupo from Noticias as n
 	inner join EstudiantesGrupo as eg on eg.idGrupo = n.idGrupo
+	inner join Grupo as g on n.idGrupo = g.idGrupo
+	inner join Curso as c on g.codigoCurso = c.codigo
 	where eg.carnetEstudiante = @carnet;
 END;
 GO
-
---agrega un administrador por defecto
-execute agregarAdmin @cedula = '0';

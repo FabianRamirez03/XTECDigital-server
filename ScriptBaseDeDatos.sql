@@ -119,6 +119,7 @@ create table Evaluaciones(
 	tipoArchivo varchar (100),
 	revisado bit default 0,
 	idRubro int not null,
+	cantPersonas int,
 	primary key (idEvaluacion)
 );
 
