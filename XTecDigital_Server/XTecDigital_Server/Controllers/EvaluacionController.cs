@@ -243,7 +243,79 @@ namespace XTecDigital_Server.Controllers
 
 
 
+        // Controller para ver todos los semestres existentes en la base de datos
+        [Route("verEvaluacionesRubro")]
+        [EnableCors("AnotherPolicy")]
+        [HttpPost]
+        public List<Object> verEvaluacionesRubro(Evaluacion evaluacion)
+        {
+            List<Object> semestres = new List<Object>();
+            //Connect to database
+            SqlConnection conn = new SqlConnection(serverKey);
+            conn.Open();
+            string insertQuery = "verEvaluacionesRubro";
+            SqlCommand cmd = new SqlCommand(insertQuery, conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@codigoCurso ", evaluacion.codigoCurso);
+            cmd.Parameters.AddWithValue("@numeroGrupo ", evaluacion.numeroGrupo);
+            cmd.Parameters.AddWithValue("@rubro", evaluacion.rubro);
+            try
+            {
+                SqlDataReader dr = cmd.ExecuteReader();
+                var response = new[]
+                    {
+                        new
+                        {
+                            respuesta = "200 OK",
+                            error = "null"
+                        }
 
+                     };
+                semestres.Add(response);
+                while (dr.Read())
+                {
+                    var jsons = new[]
+                    {
+                        new {
+                            nombre = dr[0].ToString(),
+                            fechaFin = dr[1].ToString(),
+                            porcentaje = dr[2],
+                            archivo = dr[3],
+                            cantPersonas = dr[4],
+                        }
+
+                     };
+                    Console.WriteLine(jsons);
+                    semestres.Add(jsons);
+                }
+
+            }
+            catch (Exception e)
+            {
+                string[] separatingStrings = { "\r" };
+                var response = new[]
+                    {
+                        new
+                        {
+                            respuesta = "error",
+                            error = e.Message.Split(separatingStrings, System.StringSplitOptions.RemoveEmptyEntries)[0]
+            }
+
+                     };
+                semestres.Add(response);
+
+            }
+
+            List<object> retornar = new List<object>();
+            for (var x = 0; x < semestres.Count; x++)
+            {
+                var tempList = (IList<object>)semestres[x];
+                retornar.Add(tempList[0]);
+            }
+            conn.Close();
+            return retornar;
+
+        }
 
     }
 }
