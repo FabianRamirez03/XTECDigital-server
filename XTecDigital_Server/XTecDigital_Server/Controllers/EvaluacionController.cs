@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
@@ -194,5 +195,55 @@ namespace XTecDigital_Server.Controllers
             return retornar;
 
         }
+
+
+
+        // Controller para descargar un archivo de la base de datos
+        [Route("obtenerArchivoSolucion")]
+        [EnableCors("AnotherPolicy")]
+        [HttpPost]
+        public Object obtenerArchivoSolucion(Evaluacion evaluacion)
+        {
+            try
+            {
+                SqlConnection conn = new SqlConnection(serverKey);
+                conn.Open();
+                SqlCommand cmd;
+                string insertQuery = "obtenerArchivoSolucion";
+                cmd = new SqlCommand(insertQuery, conn);
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@carnet", evaluacion.carnet);
+                cmd.Parameters.AddWithValue("@codigoCurso", evaluacion.codigoCurso);
+                cmd.Parameters.AddWithValue("@numeroGrupo", evaluacion.numeroGrupo);
+                cmd.Parameters.AddWithValue("@rubro", evaluacion.rubro);
+                cmd.Parameters.AddWithValue("@nombreEvaluacion", evaluacion.nombreEvaluacion);
+                SqlDataReader dr = cmd.ExecuteReader();
+                var archivo = "";
+                var nombre = "";
+                while (dr.Read())
+                {
+                    archivo = dr[0].ToString();
+                    nombre = dr[1].ToString();
+                }
+                var imageStream = new MemoryStream();
+                // var bytes = Encoding.ASCII.GetBytes(defaultAvatarAsBase64);
+                var bytes = Convert.FromBase64String(archivo);
+                imageStream = new MemoryStream(bytes);
+
+                var result = new FileStreamResult(imageStream, "APPLICATION/octet-stream");
+
+                result.FileDownloadName = nombre;
+                return result;
+            }
+            catch (Exception e)
+            {
+                return e;
+            }
+        }
+
+
+
+
+
     }
 }

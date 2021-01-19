@@ -18,5 +18,9 @@ namespace XTecDigital_Server.Models
         public int ano { get; set; }
         public string periodo { get; set; }
         public int grupo { get; set; }
+        public string rubro { get; set; }
+        public string nuevoRubro { get; set; }
+        public double nuevoPorcentaje { get; set; }
+        public double porcentaje { get; set; }
     }
 }

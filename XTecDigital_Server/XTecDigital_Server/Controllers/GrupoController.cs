@@ -478,5 +478,220 @@ namespace XTecDigital_Server.Controllers
             return retornar;
 
         }
+
+        // Controller para ver todos los estudiantes inscritos en un grupo de un curso específico
+        [Route("verRubrosGrupo")]
+        [EnableCors("AnotherPolicy")]
+        [HttpPost]
+        public List<Object> verRubrosGrupo(Grupo grupo)
+        {
+            List<Object> estudiantes = new List<Object>();
+            Curso usuarioCarrera = new Curso();
+            //Connect to database
+            SqlConnection conn = new SqlConnection(serverKey);
+            conn.Open();
+            string insertQuery = "verRubrosGrupo";
+            SqlCommand cmd = new SqlCommand(insertQuery, conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@codigoCurso", grupo.codigoCurso);
+            cmd.Parameters.AddWithValue("@numeroGrupo", grupo.numeroGrupo);
+            try
+            {
+                SqlDataReader dr = cmd.ExecuteReader();
+                var response = new[]
+                    {
+                        new
+                        {
+                            respuesta = "200 OK",
+                            error = "null"
+                        }
+
+                     };
+                estudiantes.Add(response);
+                while (dr.Read())
+                {
+                    var jsons = new[]
+                    {
+                        new {
+                            rubro = dr[1].ToString(),
+                            porcentaje = dr[2].ToString(),
+                            }
+
+                     };;
+                    estudiantes.Add(jsons);
+                }
+
+            }
+            catch (Exception e)
+            {
+                string[] separatingStrings = { "\r" };
+                var response = new[]
+                    {
+                        new
+                        {
+                            respuesta = "error",
+                            error = e.Message.Split(separatingStrings, System.StringSplitOptions.RemoveEmptyEntries)[0]
+            }
+
+                     };
+                estudiantes.Add(response);
+
+            }
+
+            List<object> retornar = new List<object>();
+            for (var x = 0; x < estudiantes.Count; x++)
+            {
+                var tempList = (IList<object>)estudiantes[x];
+                retornar.Add(tempList[0]);
+            }
+            conn.Close();
+            return retornar;
+
+        }
+
+        // Controller para asignar un determinado profesor a un grupo específico
+        [Route("editarRubrosGrupo")]
+        [EnableCors("AnotherPolicy")]
+        [HttpPost]
+        public object editarRubrosGrupo(Grupo grupo)
+        {
+            SqlConnection conn = new SqlConnection(serverKey);
+            conn.Open();
+            string insertQuery = "editarRubrosGrupo";
+            SqlCommand cmd = new SqlCommand(insertQuery, conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@codigoCurso", grupo.codigoCurso);
+            cmd.Parameters.AddWithValue("@numeroGrupo", grupo.numeroGrupo);
+            cmd.Parameters.AddWithValue("@rubro", grupo.rubro);
+            cmd.Parameters.AddWithValue("@nuevoRubro", grupo.nuevoRubro);
+            cmd.Parameters.AddWithValue("@nuevoPorcentaje", grupo.nuevoPorcentaje);
+            List<Object> respuesta = new List<Object>();
+            try
+            {
+                cmd.ExecuteNonQuery();
+                var response = new[]
+                    {
+                        new
+                        {
+                            respuesta = "200 OK",
+                            error = "null"
+                        }
+
+                     };
+                respuesta.Add(response);
+            }
+            catch (Exception e)
+            {
+                string[] separatingStrings = { "\r" };
+                var response = new[]
+                    {
+                        new
+                        {
+                            respuesta = "error",
+                            error = e.Message.Split(separatingStrings, System.StringSplitOptions.RemoveEmptyEntries)[0]
+            }
+
+                     };
+                respuesta.Add(response);
+            }
+            conn.Close();
+            return respuesta[0];
+        }
+
+        // Controller para asignar un determinado profesor a un grupo específico
+        [Route("crearRubro")]
+        [EnableCors("AnotherPolicy")]
+        [HttpPost]
+        public object crearRubro(Grupo grupo)
+        {
+            SqlConnection conn = new SqlConnection(serverKey);
+            conn.Open();
+            string insertQuery = "crearRubro";
+            SqlCommand cmd = new SqlCommand(insertQuery, conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@rubro", grupo.rubro);
+            cmd.Parameters.AddWithValue("@porcentaje", grupo.porcentaje);
+            cmd.Parameters.AddWithValue("@codigoCurso", grupo.codigoCurso);
+            cmd.Parameters.AddWithValue("@numeroGrupo", grupo.numeroGrupo);
+            List<Object> respuesta = new List<Object>();
+            try
+            {
+                cmd.ExecuteNonQuery();
+                var response = new[]
+                    {
+                        new
+                        {
+                            respuesta = "200 OK",
+                            error = "null"
+                        }
+
+                     };
+                respuesta.Add(response);
+            }
+            catch (Exception e)
+            {
+                string[] separatingStrings = { "\r" };
+                var response = new[]
+                    {
+                        new
+                        {
+                            respuesta = "error",
+                            error = e.Message.Split(separatingStrings, System.StringSplitOptions.RemoveEmptyEntries)[0]
+            }
+
+                     };
+                respuesta.Add(response);
+            }
+            conn.Close();
+            return respuesta[0];
+        }
+
+        // Controller para asignar un determinado profesor a un grupo específico
+        [Route("eliminarRubro")]
+        [EnableCors("AnotherPolicy")]
+        [HttpPost]
+        public object eliminarRubro(Grupo grupo)
+        {
+            SqlConnection conn = new SqlConnection(serverKey);
+            conn.Open();
+            string insertQuery = "eliminarRubro";
+            SqlCommand cmd = new SqlCommand(insertQuery, conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@rubro", grupo.rubro);
+            cmd.Parameters.AddWithValue("@codigoCurso", grupo.codigoCurso);
+            cmd.Parameters.AddWithValue("@numeroGrupo", grupo.numeroGrupo);
+            List<Object> respuesta = new List<Object>();
+            try
+            {
+                cmd.ExecuteNonQuery();
+                var response = new[]
+                    {
+                        new
+                        {
+                            respuesta = "200 OK",
+                            error = "null"
+                        }
+
+                     };
+                respuesta.Add(response);
+            }
+            catch (Exception e)
+            {
+                string[] separatingStrings = { "\r" };
+                var response = new[]
+                    {
+                        new
+                        {
+                            respuesta = "error",
+                            error = e.Message.Split(separatingStrings, System.StringSplitOptions.RemoveEmptyEntries)[0]
+            }
+
+                     };
+                respuesta.Add(response);
+            }
+            conn.Close();
+            return respuesta[0];
+        }
+
     }
 }
