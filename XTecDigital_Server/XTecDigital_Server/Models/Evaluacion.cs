@@ -21,6 +21,7 @@ namespace XTecDigital_Server.Models
         public string rubro { get; set; }
         public string codigoCurso { get; set; }
         public int numeroGrupo { get; set; }
+        public string carnet { get; set; }
     }
 }
 
