@@ -445,6 +445,7 @@ BEGIN
 END;
 GO
 
+
 --Valida que la carpeta que se crea no exista en el mismo grupo
 Create or Alter Trigger tr_verificarCarpeta on Carpetas
 for Insert
@@ -609,6 +610,16 @@ BEGIN
 END;
 GO
 
+--Ver todas las evaluaciones de un grupo segun su rubro
+CREATE OR ALTER PROCEDURE verEvaluacionesRubro @codigoCurso varchar (10), @numeroGrupo int, @rubro varchar (30)
+AS
+BEGIN
+	DECLARE @idGrupo int = (select idGrupo from Grupo where codigoCurso = @codigoCurso and numeroGrupo = @numeroGrupo);
+	DECLARE @idRubro int = (select idRubro from Rubros where idGrupo = @idGrupo and rubro = @rubro);
+	Select nombre,fechaFin, porcentaje, archivo, cantPersonas from Evaluaciones where idRubro = @idRubro 
+END;
+GO
+
 --Editar los rubros de un grupo
 CREATE OR ALTER PROCEDURE editarRubrosGrupo @codigoCurso varchar(10), @numeroGrupo int, @rubro varchar(50), @nuevoRubro varchar(50), @nuevoPorcentaje decimal(5,2)
 AS
@@ -645,18 +656,17 @@ BEGIN
 END;
 GO
 
---Ver las evaluaciones de un grupo segun su rubro
+--Ver las evaluaciones enviadas por los estudiantes de un grupo
 CREATE OR ALTER PROCEDURE verEvaluacionesEstudiantes @codigoCurso varchar(10), @numeroGrupo int, @rubro varchar(50), @nombreEvaluacion varchar (50)
 AS
 BEGIN
 	DECLARE @idGrupo int = (select idGrupo from Grupo where codigoCurso = @codigoCurso and numeroGrupo = @numeroGrupo);
 	DECLARE @idRubro int = (select idRubro from Rubros where idGrupo = @idGrupo and rubro = @rubro);
 	DECLARE @idEvaluacion int = (select idEvaluacion from Evaluaciones where idRubro = @idRubro and nombre = @nombreEvaluacion)
-	Select carnet, archivoSolucion from EvaluacionesEstudiantes where idEvaluacion = @idEvaluacion and archivoSolucion != 'NULL'
-	group by carnet, archivoSolucion
+	Select carnet, archivoSolucion, nomArchSol from EvaluacionesEstudiantes where idEvaluacion = @idEvaluacion and archivoSolucion != 'NULL'
+	group by carnet, archivoSolucion, nomArchSol
 END;
 GO
-
 
 --Asignar grupos de trabajo
 CREATE OR ALTER PROCEDURE agregarEstudianteEvaluacionGrupal @carnetEstudiante varchar (15), @idEvaluacion int, @numeroGrupoEvaluacion int
@@ -713,14 +723,6 @@ END;
 GO
 
 
---Ver evaluaciones de los estudiantes
-CREATE OR ALTER PROCEDURE verEvaluacionesEstudiantes @idEvaluacion int
-AS
-BEGIN
-	select * from EvaluacionesEstudiantes where idEvaluacion = @idEvaluacion;
-END;
-GO
-
 --Revisar las evaluaciones estudiante, subir comentario, poner nota, subir archivo retroalimentacion)
 CREATE OR ALTER PROCEDURE revisarEvaluacion @carnet varchar(20), @codigoCurso varchar(20), @numeroGrupo int, @rubro varchar (20), @nombre varchar (50),  @nota decimal(5,2), @comentario varchar(200), @nombreArch varchar(100),
 @tipoArch varchar (100), @archivoRetroalimentacion varchar(MAX)
@@ -734,10 +736,6 @@ BEGIN
 	where carnet = @carnet and idEvaluacion = @idEvaluacion;
 END;
 GO
-
-
-
-
 
 --Indica que las notas de una evaluacion ya fueron publicadas y crea una noticia por medio de un trigger
 CREATE OR ALTER PROCEDURE publicarNotas @idEvaluacion int AS
@@ -1002,9 +1000,13 @@ END;
 GO
 
 --Enviar evaluaciones
-CREATE OR ALTER PROCEDURE subirEvaluacion @nombArch varchar(100), @tipoArch varchar (100) , @archivo varchar(MAX), @idEvaluacion int, @carnet varchar(15)
+CREATE OR ALTER PROCEDURE subirEvaluacion @nombArch varchar(100), @tipoArch varchar (100) , @archivo varchar(MAX), @carnet varchar(15), @codigoCurso varchar (20),
+@numeroGrupo int, @rubro varchar (30), @nombreEvaluacion varchar (50)
 AS
 BEGIN
+	DECLARE @idGrupo int = (select idGrupo from Grupo where codigoCurso = @codigoCurso and numeroGrupo = @numeroGrupo);
+	DECLARE @idRubro int = (select idRubro from Rubros where idGrupo = @idGrupo and rubro = @rubro);
+	DECLARE @idEvaluacion int = (select idEvaluacion from Evaluaciones where idRubro = @idRubro and nombre = @nombreEvaluacion);
 	update EvaluacionesEstudiantes set archivoSolucion = @archivo, nomArchSol = @nombArch, tipoArchSol = @tipoArch where idEvaluacion = @idEvaluacion and carnet = @carnet;
 END;
 GO
@@ -1053,6 +1055,6 @@ BEGIN
 	DECLARE @idGrupo int = (select idGrupo from Grupo where codigoCurso = @codigoCurso and numeroGrupo = @numeroGrupo);
 	DECLARE @idRubro int = (select idRubro from Rubros where rubro = @rubro and idGrupo = @idGrupo);
 	DECLARE @idEvaluacion int = (select idEvaluacion from Evaluaciones where idRubro = @idRubro and nombre = @nombreEvaluacion);
-	Select archivoSolucion from EvaluacionesEstudiantes where carnet = @carnet and idEvaluacion = @idEvaluacion;
+	Select archivoSolucion, nomArchSol nombreArchivo from EvaluacionesEstudiantes where carnet = @carnet and idEvaluacion = @idEvaluacion;
 END;
 GO

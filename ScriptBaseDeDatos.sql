@@ -128,7 +128,7 @@ create table EvaluacionesEstudiantes (
 	carnet varchar(15) not null,
 	idEvaluacion int not null,
 	grupo int default 0,
-	nota decimal(5,2),
+	nota decimal(5,2) default 0,
 	comentario varchar (300),
 	archivoRetroalimentacion varchar(max),
 	nombArchRetr varchar (100),
