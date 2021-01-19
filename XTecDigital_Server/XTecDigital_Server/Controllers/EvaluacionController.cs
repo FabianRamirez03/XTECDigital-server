@@ -242,6 +242,49 @@ namespace XTecDigital_Server.Controllers
         }
 
 
+        // Controller para descargar un archivo de la base de datos
+        [Route("subirEvaluacion")]
+        [EnableCors("AnotherPolicy")]
+        [HttpPost]
+        public Object subirEvaluacion(Evaluacion evaluacion)
+        {
+
+  
+            SqlConnection conn = new SqlConnection(serverKey);
+            conn.Open();
+            SqlCommand cmd;
+            string insertQuery = "subirEvaluacion";
+            cmd = new SqlCommand(insertQuery, conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@nombArch", evaluacion.nombreEvaluacion);
+            cmd.Parameters.AddWithValue("@tipoArch", evaluacion.nombreEvaluacion);
+            cmd.Parameters.AddWithValue("@archivo", evaluacion.archivo);
+            cmd.Parameters.AddWithValue("@carnet", evaluacion.carnet);
+            cmd.Parameters.AddWithValue("@codigoCurso", evaluacion.codigoCurso);
+            cmd.Parameters.AddWithValue("@numeroGrupo", evaluacion.numeroGrupo);
+            cmd.Parameters.AddWithValue("@rubro", evaluacion.rubro);
+            cmd.Parameters.AddWithValue("@nombreEvaluacion", evaluacion.nombreEvaluacion);
+            SqlDataReader dr = cmd.ExecuteReader();
+            var archivo = "";
+            var nombre = "";
+            while (dr.Read())
+            {
+                archivo = dr[0].ToString();
+                nombre = dr[1].ToString();
+            }
+            var imageStream = new MemoryStream();
+            // var bytes = Encoding.ASCII.GetBytes(defaultAvatarAsBase64);
+            var bytes = Convert.FromBase64String(archivo);
+            imageStream = new MemoryStream(bytes);
+
+            var result = new FileStreamResult(imageStream, "APPLICATION/octet-stream");
+
+            result.FileDownloadName = nombre;
+            return result;
+           
+        }
+
+
 
         // Controller para ver todos los semestres existentes en la base de datos
         [Route("verEvaluacionesRubro")]
@@ -317,5 +360,78 @@ namespace XTecDigital_Server.Controllers
 
         }
 
+
+        // Controller para ver todos los semestres existentes en la base de datos
+        [Route("verEvaluacionesEstudiantes")]
+        [EnableCors("AnotherPolicy")]
+        [HttpPost]
+        public List<Object> verEvaluacionesEstudiantes(Evaluacion evaluacion)
+        {
+            List<Object> semestres = new List<Object>();
+            //Connect to database
+            SqlConnection conn = new SqlConnection(serverKey);
+            conn.Open();
+            string insertQuery = "verEvaluacionesEstudiantes";
+            SqlCommand cmd = new SqlCommand(insertQuery, conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@codigoCurso ", evaluacion.codigoCurso);
+            cmd.Parameters.AddWithValue("@numeroGrupo ", evaluacion.numeroGrupo);
+            cmd.Parameters.AddWithValue("@rubro", evaluacion.rubro);
+            cmd.Parameters.AddWithValue("@nombreEvaluacion", evaluacion.nombreEvaluacion);
+            try
+            {
+                SqlDataReader dr = cmd.ExecuteReader();
+                var response = new[]
+                    {
+                        new
+                        {
+                            respuesta = "200 OK",
+                            error = "null"
+                        }
+
+                     };
+                semestres.Add(response);
+                while (dr.Read())
+                {
+                    var jsons = new[]
+                    {
+                        new {
+                            carnet = dr[0].ToString(),
+                            archivo = dr[1],
+                            nombre = dr[2].ToString(),
+                        }
+
+                     };
+                    Console.WriteLine(jsons);
+                    semestres.Add(jsons);
+                }
+
+            }
+            catch (Exception e)
+            {
+                string[] separatingStrings = { "\r" };
+                var response = new[]
+                    {
+                        new
+                        {
+                            respuesta = "error",
+                            error = e.Message.Split(separatingStrings, System.StringSplitOptions.RemoveEmptyEntries)[0]
+            }
+
+                     };
+                semestres.Add(response);
+
+            }
+
+            List<object> retornar = new List<object>();
+            for (var x = 0; x < semestres.Count; x++)
+            {
+                var tempList = (IList<object>)semestres[x];
+                retornar.Add(tempList[0]);
+            }
+            conn.Close();
+            return retornar;
+
+        }
     }
 }

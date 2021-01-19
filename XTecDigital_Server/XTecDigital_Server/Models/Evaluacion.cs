@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,6 +24,8 @@ namespace XTecDigital_Server.Models
         public int numeroGrupo { get; set; }
         public string carnet { get; set; }
         public string nombreEvaluacion { get; set; }
+        public string nombArch { get; set; }
+        public string tipoArch { get; set; }
     }
 }
 
