@@ -1046,3 +1046,13 @@ BEGIN
 END;
 GO
 
+--Devuelve el archivo con la solucion subido por el estudiante
+CREATE OR ALTER PROCEDURE obtenerArchivoSolucion @carnet varchar(20), @codigoCurso varchar(20), @numeroGrupo int, @rubro varchar (30), @nombreEvaluacion varchar (50)
+AS
+BEGIN
+	DECLARE @idGrupo int = (select idGrupo from Grupo where codigoCurso = @codigoCurso and numeroGrupo = @numeroGrupo);
+	DECLARE @idRubro int = (select idRubro from Rubros where rubro = @rubro and idGrupo = @idGrupo);
+	DECLARE @idEvaluacion int = (select idEvaluacion from Evaluaciones where idRubro = @idRubro and nombre = @nombreEvaluacion);
+	Select archivoSolucion from EvaluacionesEstudiantes where carnet = @carnet and idEvaluacion = @idEvaluacion;
+END;
+GO
